@@ -89,7 +89,7 @@ export default function SignUpPage() {
           <option value="">Select Role</option>
           <option value="donor">Donor</option>
           <option value="receiver">Receiver</option>
-          <option value="admin">admin</option>
+          <option value="admin">Admin</option>
         </select>
         {errors.role && (
           <p className="text-red-400 text-sm mb-3">{errors.role.message}</p>

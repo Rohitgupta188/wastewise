@@ -1,5 +1,20 @@
-import { Utensils, Bell, User } from "lucide-react";
+import { Utensils } from "lucide-react";
+import { Button } from "@/Components/ui/button";
+import { useRouter } from "next/navigation";
+import { http } from "@/lib/http";
 export function Navbar() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await http.post("/signout", {}, { withCredentials: true });
+
+      router.replace("/sign-in");
+      router.refresh(); // clear auth state
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
   return (
     <header className="bg-[#1A4D2E] text-white py-4 px-6 flex items-center justify-between shadow-md sticky top-0 z-50">
       <div className="flex items-center gap-8">
@@ -18,24 +33,10 @@ export function Navbar() {
         <span className="text-white border-b-2 border-white pb-1 cursor-pointer">
           Dashboard
         </span>
-        <span className="hover:text-white cursor-pointer transition-colors">
-          My Profile
-        </span>
-        <span className="hover:text-white cursor-pointer transition-colors">
-          Reports
-        </span>
       </nav>
 
       <div className="flex items-center gap-4">
-        <div className="relative cursor-pointer">
-          <Bell className="w-5 h-5 opacity-90" />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-            2
-          </span>
-        </div>
-        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition">
-          <User className="w-4 h-4" />
-        </div>
+        <Button onClick={handleLogout} variant='destructive'>Logout</Button>
       </div>
     </header>
   );

@@ -30,7 +30,6 @@ export async function fetchNgoRequests(page = 1) {
 export async function verifyNgo(
   userId: string,
   action: "approve" | "reject",
-  reason?: string
 ) {
   try {
     const res = await http.post(`/admin/ngo-verify/${userId}`, {

@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     
     if (!user) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { error: "User not exits" },
         { status: 401 }
       );
     }

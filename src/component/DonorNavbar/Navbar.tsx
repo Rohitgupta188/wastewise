@@ -1,6 +1,21 @@
+import { Button } from "@/Components/ui/button";
+import { http } from "@/lib/http";
 import { Utensils, Bell } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 export function Navbar() {
+  const router = useRouter();
+    const handleLogout = async () => {
+      try {
+        await http.post("/signout", {}, { withCredentials: true });
+  
+        router.replace("/sign-in");
+        router.refresh(); // clear auth state
+      } catch (error) {
+        console.error("Logout failed", error);
+      }
+    };
   return (
    
     <nav className="bg-[#2D5A27] text-white px-4 sm:px-8 py-4 flex flex-wrap justify-between items-center shadow-md">
@@ -20,6 +35,7 @@ export function Navbar() {
             <Bell className="w-6 h-6 group-hover:text-yellow-300 transition-colors" />
 
           </Link>
+          <Button onClick={handleLogout} variant='destructive'>Logout</Button>
       </div>
     </nav>
   );

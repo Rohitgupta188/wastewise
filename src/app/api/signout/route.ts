@@ -6,7 +6,12 @@ export async function POST() {
     { status: 200 }
   )
 
-  response.cookies.delete('auth_token')
+    response.cookies.set({
+    name: "auth_token",
+    value: "",
+    expires: new Date(0),
+    path: "/",
+  });
 
   return response
 }

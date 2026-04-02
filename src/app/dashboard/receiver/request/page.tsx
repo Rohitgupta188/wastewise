@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { http } from "@/lib/http";
-import { Clock, MapPin, Utensils, ChevronDown } from "lucide-react";
+import { Clock, MapPin, Utensils} from "lucide-react";
 
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
@@ -120,32 +120,14 @@ export default function ReceiverDonationsPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-4 py-2">
           <div className="flex items-center gap-2 bg-white p-1.5 rounded-lg shadow-sm">
-            <button
+            <Button
               onClick={fetchDonations}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              variant="ghost"
             >
               Refresh Status
-            </button>
-            <Button
-              variant="ghost"
-              className="text-gray-500 text-sm h-9 px-3 hover:bg-gray-50"
-            >
-              Sort by: Best Source
             </Button>
             <Button className="bg-[#1A4D2E] hover:bg-[#153e25] text-white text-sm h-9 px-4 rounded-md shadow-sm">
               Browse Surplus
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-gray-500 text-sm h-9 px-3 hover:bg-gray-50"
-            >
-              Category <ChevronDown className="w-3 h-3 ml-2 opacity-50" />
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-gray-500 text-sm h-9 bg-gray-100 hover:bg-gray-200"
-            >
-              All
             </Button>
           </div>
         </div>

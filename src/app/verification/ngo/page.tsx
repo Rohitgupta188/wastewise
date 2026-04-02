@@ -17,7 +17,7 @@ export default function NgoVerificationPage() {
   const fetchStatus = async () => {
     try {
       const res = await http.get("/verification/status");
-      setStatus(res.data.status);
+      setStatus(res.data.NGOStatus);
     } catch (err) {
       console.error("Failed to fetch status");
     }

@@ -20,28 +20,35 @@ export default function SignInPage() {
     resolver: zodResolver(signinSchema),
   });
 
-  const onSubmit = async (data: SigninInput) => {
-    try {
-      const res = await http.post("/signin", data);
+const onSubmit = async (data: SigninInput) => {
+  try {
+    const res = await http.post("/signin", data);
 
-      const user = res.data.user;
-      console.log(user);
+    const user = res.data.user;
 
-      if (user.role === "donor") {
-        return router.replace("/dashboard/donor");
-      } else if (user.role === "admin") {
-        return router.replace("/dashboard/admin");
-      } else if (user.role === "receiver") {
-        return router.replace(`/verification/${user.receiverType}`);
-      } else {
-        return router.replace("/sign-in");
-      }
-    } catch {
-      setError("root", {
-        message: "Invalid email or password",
-      });
+    if (user.role === "donor") {
+      router.replace("/dashboard/donor");
+      router.refresh();
+      return;
     }
-  };
+
+    if (user.role === "admin") {
+      router.replace("/dashboard/admin");
+      return;
+    }
+
+    if (user.role === "receiver") {
+      router.replace(`/verification/${user.receiverType}`);
+      return;
+    }
+
+    router.replace("/sign-in");
+  } catch {
+    setError("root", {
+      message: "Invalid email or password",
+    });
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 to-slate-800">

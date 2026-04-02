@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { fetchDashboardMetrics } from "@/lib/adminApi";
 import MetricsCards from "@/component/admin/MetricsCards";
+import { requireAdmin } from "@/lib/adminGuard";
 
 export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<any>(null);
+  
 
   useEffect(() => {
     fetchDashboardMetrics().then(setMetrics).catch(console.error);

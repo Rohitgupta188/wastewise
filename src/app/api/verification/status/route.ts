@@ -10,6 +10,7 @@ export async function GET() {
   }
 
   return NextResponse.json({
-    status: user.ngoVerification?.status || "unverified",
+    NGOStatus: user.ngoVerification?.status || "unverified",
+    IndividualStatus: user.individualVerification?.emailVerified || 'false'
   });
 }

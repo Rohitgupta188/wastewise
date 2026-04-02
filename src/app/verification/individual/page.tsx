@@ -1,19 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { http } from "@/lib/http";
+import { Button } from "@/Components/ui/button";
 
 const verificationSchema = z.object({
   email: z.email("Valid email required"),
-  otp: z
-    .string()
-    .min(6, "OTP must be 6 digits")
-    .max(6, "OTP must be 6 digits"),
+  otp: z.string().min(6, "OTP must be 6 digits").max(6, "OTP must be 6 digits"),
 });
 
 type VerificationInput = z.infer<typeof verificationSchema>;
@@ -22,7 +21,22 @@ export default function KYCVerificationPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  
 
+  const fetchStatus = async () => {
+    try {
+      const res = await http.get("/verification/status");
+      setStatus(res.data.IndividualStatus);
+    } catch (err) {
+      console.error("Failed to fetch status");
+    }
+  };
+
+  useEffect(() => {
+    fetchStatus();
+  }, []);
+console.log(status);
   const {
     register,
     handleSubmit,
@@ -36,7 +50,7 @@ export default function KYCVerificationPage() {
     setSuccessMessage(null);
 
     try {
-      const res = await axios.post("/api/verification", data);
+      const res = await http.post("/verification", data);
 
       if (res.data.success) {
         setSuccessMessage("Verification successful. Redirecting...");
@@ -45,10 +59,11 @@ export default function KYCVerificationPage() {
         }, 1500);
       }
     } catch (error: any) {
-      setServerError(
-        error.response?.data?.error || "Verification failed"
-      );
+      setServerError(error.response?.data?.error || "Verification failed");
     }
+    
+
+     if (status === null) return <p>Loading...</p>;
   };
 
   return (
@@ -59,9 +74,10 @@ export default function KYCVerificationPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-slate-900 text-white p-8 rounded-2xl shadow-xl w-full max-w-md"
       >
-        <h1 className="text-2xl font-semibold mb-6">
-          KYC Verification
-        </h1>
+        <Button variant="default" onClick={fetchStatus}>
+          refesh{" "}
+        </Button>
+        <h1 className="text-2xl font-semibold mb-6">KYC Verification</h1>
 
         {serverError && (
           <p className="mb-4 text-sm text-red-400 bg-red-400/10 p-2 rounded">
@@ -82,9 +98,7 @@ export default function KYCVerificationPage() {
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-red-400 text-sm mb-3">
-            {errors.email.message}
-          </p>
+          <p className="text-red-400 text-sm mb-3">{errors.email.message}</p>
         )}
 
         <input
@@ -95,9 +109,7 @@ export default function KYCVerificationPage() {
           {...register("otp")}
         />
         {errors.otp && (
-          <p className="text-red-400 text-sm mb-3">
-            {errors.otp.message}
-          </p>
+          <p className="text-red-400 text-sm mb-3">{errors.otp.message}</p>
         )}
 
         <button
@@ -107,6 +119,14 @@ export default function KYCVerificationPage() {
         >
           {isSubmitting ? "Verifying..." : "Verify Account"}
         </button>
+        {status && (
+          <Button
+            onClick={() => router.replace("/dashboard/receiver/request")}
+            variant="default"
+          >
+            Go to Dashboard
+          </Button>
+        )}
       </motion.form>
     </div>
   );

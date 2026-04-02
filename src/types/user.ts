@@ -13,7 +13,7 @@ export type User = {
   receiverType?: ReceiverType;
 
   ngoVerificationStatus?: VerificationStatus;
-
+  
   phoneVerified?: boolean;
   idVerified?: boolean;
 

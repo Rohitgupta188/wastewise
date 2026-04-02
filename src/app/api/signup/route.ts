@@ -20,17 +20,7 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-
-    if (data.role === "receiver") {
-      if (!data.receiverType) {
-        return NextResponse.json(
-          { success: false, error: "Receiver type required" },
-          { status: 400 },
-        );
-      }
-    }
-
-    const existingUser = await User.findOne({ email: data.email }).lean();
+    const existingUser = await User.exists({ email: data.email });
 
     if (existingUser) {
       return NextResponse.json(
@@ -41,26 +31,31 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await hashPassword(data.password);
 
+    let otpCode: string | undefined;
+    let otpExpiresAt: Date | undefined;
+
+    if (data.role === "receiver" && data.receiverType === "individual") {
+      otpCode = generateOtp();
+      otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    }
+
+
     const user = await User.create({
       email: data.email,
       password: hashedPassword,
       name: data.name,
       role: data.role,
       receiverType: data.role === "receiver" ? data.receiverType : undefined,
+      otpCode,
+      otpExpiresAt,
     });
 
-    if (data.role === "receiver" && data.receiverType === 'individual') {
-      const otp = generateOtp();
-
-      user.otpCode = otp;
-      user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-      await user.save();
-
-      await sendOtpVerificationEmail({
+    if (otpCode) {
+      sendOtpVerificationEmail({
         email: user.email,
         name: user.name,
-        otp,
-      });
+        otp: otpCode,
+      }).catch(console.error);
     }
 
     return NextResponse.json(
