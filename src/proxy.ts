@@ -10,6 +10,7 @@ const PUBLIC_PAGES = new Set([
 const PUBLIC_API_PREFIXES = [
   "/api/signup",
   "/api/signin",
+  "/api/chat",
 ];
 
 
