@@ -75,7 +75,7 @@ Platform flow:
     // ✅ Context-aware messages (last 5)
     const chatHistory =
       messages?.slice(-5).map((m) => ({
-        role: m.role,
+        role: m.role === "assistant" ? "model" : m.role, // ⚠️ FIX: Gemini expects "model" or "user" instead of "assistant"
         parts: [{ text: m.content }],
       })) || [
         {
@@ -88,10 +88,7 @@ Platform flow:
       model: "gemini-2.5-flash",
       contents: chatHistory,
       config: {
-        systemInstruction: {
-          role: "system",
-          parts: [{ text: systemPrompt }],
-        },
+        systemInstruction: systemPrompt,
       },
     });
 
